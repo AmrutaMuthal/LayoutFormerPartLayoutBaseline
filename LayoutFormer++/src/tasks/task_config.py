@@ -1,7 +1,7 @@
 from typing import Callable
 
 from model import LayoutTransformerTokenizer
-from data import RicoDataset, PubLayNetDataset
+from data import RicoDataset, PubLayNetDataset, PartLayoutDataset
 from tasks.refinement import T5LayoutSequence, T5RefinementDataset, refinement_inference
 from tasks.completion import T5CompletionLayoutSequence, T5CompletionDataset, completion_inference
 from tasks.ugen import T5UGenDataset, ugen_inference
@@ -14,7 +14,12 @@ def create_seq_processor(task: str) -> Callable:
 
     def _create(dataset: str, tokenizer: LayoutTransformerTokenizer,
                 add_sep_token: bool = False, *args, **kwargs):
-        _dataset = RicoDataset if dataset == 'rico' else PubLayNetDataset
+        if dataset == 'rico':
+            _dataset = RicoDataset
+        elif dataset == 'partlayout':
+            _dataset = PartLayoutDataset
+        else:
+            _dataset = PubLayNetDataset
         label2index, index2label = dict(), dict()
         for idx, _ in _dataset.index2label(_dataset.labels).items():
             ln = "label_{}".format(idx)

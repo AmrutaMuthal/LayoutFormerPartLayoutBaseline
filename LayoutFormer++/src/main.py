@@ -38,7 +38,7 @@ def train(args):
         'add_task_prompt_token_in_model': args.add_task_prompt_token_in_model
     }
     print(f"Training on tasks: {args.tasks}")
-    print(task_config)
+
     tasks = args.tasks.split(",")
     tn = 'multitask' if len(tasks) > 1 else args.tasks
 
@@ -55,7 +55,8 @@ def train(args):
                                    task_config=TASK_CONFIG, sort_by_pos=not args.sort_by_dict)
     val_dataset = create_dataset(args, tokenizer=tokenizer, split='val',
                                  task_config=TASK_CONFIG, sort_by_pos=not args.sort_by_dict)
-
+    # train_dataset.load_raw_data()
+    # train_dataset.load_raw_data()
     print(f'train data: {len(train_dataset)}')
     print(f'valid data: {len(val_dataset)}')
 

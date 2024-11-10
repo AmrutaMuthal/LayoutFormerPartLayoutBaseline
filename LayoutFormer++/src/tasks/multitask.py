@@ -3,7 +3,7 @@ import numpy as np
 import random
 from collections import defaultdict
 
-from data import RicoDataset, PubLayNetDataset
+from data import RicoDataset, PubLayNetDataset, PartLayoutDataset
 
 
 class T5MultiTaskDataset:
@@ -377,3 +377,71 @@ class T5PubLayNetMultiTaskFineGrainedPartitionDataset(T5MultiTaskFineGrainedPart
                          root=args.data_dir, split=split,
                          max_num_elements=args.max_num_elements,
                          online_process=online_process)
+
+class T5PartLayoutMultiTaskSamplingDataset(T5MultiTaskSamplingDataset, PartLayoutDataset):
+    def __init__(self, args, tokenizer, task_config, split, online_process=True,
+                 remove_too_long_layout: bool = False, sort_by_pos: bool = True) -> None:
+        super().__init__(args, tokenizer, task_config=task_config,
+                         sort_by_pos=sort_by_pos,
+                         root=args.data_dir, split=split,
+                         max_num_elements=args.max_num_elements,
+                         online_process=online_process)
+
+
+class T5PartLayoutTaskConcatDataset(T5MultiTaskConcatDataset, PartLayoutDataset):
+    def __init__(self, args, tokenizer, task_config, split, online_process=True,
+                 remove_too_long_layout: bool = False, sort_by_pos: bool = True) -> None:
+        super().__init__(args, tokenizer, task_config=task_config,
+                         sort_by_pos=sort_by_pos,
+                         root=args.data_dir, split=split,
+                         max_num_elements=args.max_num_elements,
+                         online_process=online_process)
+
+
+class T5PartLayoutMultiTaskRotationDataset(T5MultiTaskRotationDataset, PartLayoutDataset):
+    def __init__(self, args, tokenizer, task_config, split, online_process=True,
+                 remove_too_long_layout: bool = False, sort_by_pos: bool = True) -> None:
+        super().__init__(args, tokenizer, task_config=task_config,
+                         sort_by_pos=sort_by_pos,
+                         root=args.data_dir, split=split,
+                         max_num_elements=args.max_num_elements,
+                         online_process=online_process)
+
+class T5PartLayoutMultiTaskPartitionDataset(T5MultiTaskPartitionDataset, PartLayoutDataset):
+    def __init__(self, args, tokenizer, task_config, split, online_process=True,
+                 remove_too_long_layout: bool = False, sort_by_pos: bool = True,
+                 task_buckets: str = None) -> None:
+        super().__init__(args, tokenizer, task_config=task_config,
+                         sort_by_pos=sort_by_pos, task_buckets=task_buckets,
+                         root=args.data_dir, split=split,
+                         max_num_elements=args.max_num_elements,
+                         online_process=online_process)
+
+
+class T5PartLayoutMultiTaskFineGrainedPartitionDataset(T5MultiTaskFineGrainedPartitionDataset, PartLayoutDataset):
+    def __init__(self, args, tokenizer, task_config, split, online_process=True,
+                 remove_too_long_layout: bool = False, sort_by_pos: bool = True,
+                 task_data_size: str = None, task_weights: str = None) -> None:
+        super().__init__(args, tokenizer, task_config=task_config, sort_by_pos=sort_by_pos,
+                         task_data_size=task_data_size, task_weights=task_weights,
+                         root=args.data_dir, split=split,
+                         max_num_elements=args.max_num_elements,
+                         online_process=online_process)
+
+
+# import torch
+# import json
+# import os
+# splits = ['train', 'test', 'val']
+
+# for split in splits:
+#   path = f"/Users/amrutamuthal/Documents/training_data/layout_gen/layout_{split}.json"
+#   with open(path, 'r') as f:
+#     data = json.load(f)
+#     if type(data) == str:
+#       data = json.loads(data)
+#   store_path_root = f'/Users/amrutamuthal/Documents/VSWorkspaces/LayoutFormer++/LayoutGeneration/LayoutFormer++/datasets/partlayout/pre_processed_16_95/'
+#   if not os.path.exists(store_path_root):
+#     os.makedirs(store_path_root)
+#   store_path = store_path_root + f'{split}.pt'
+#   torch.save(data, store_path)

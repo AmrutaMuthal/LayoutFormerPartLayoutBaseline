@@ -16,7 +16,7 @@ def add_arguments(parser):
                         help='output directory')
 
     # data
-    parser.add_argument('--dataset', type=str, choices=['rico', 'publaynet'],
+    parser.add_argument('--dataset', type=str, choices=['rico', 'publaynet', 'partlayout'],
                         help='dataset name')
     parser.add_argument('--max_num_elements', type=int, default=20,
                         help='max number of design elements')

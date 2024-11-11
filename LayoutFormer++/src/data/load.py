@@ -287,7 +287,7 @@ def load_partlayout_data(raw_dir: str, max_num_elements: int,
 
     train_list, val_list = None, None
     # raw_dir = Path(raw_dir)
-    for split_partlayout in ['train', 'val']:
+    for split_partlayout in ['train', 'test', 'val']:
         dataset = []
         json_path = Path(raw_dir) / f'layout_{split_partlayout}.json'
         with json_path.open() as f:
@@ -314,7 +314,7 @@ def load_partlayout_data(raw_dir: str, max_num_elements: int,
                 # bbox
                 x1, y1 = element['x_min'], element['y_min']
                 width, height = element['width'], element['height']
-                b = [x1 / W, y1 / H,  width / W, height / H]  # bbox format: ltwh
+                b = [x1 , y1,  width, height]  # bbox format: ltwh
                 bboxes.append(b)
 
                 # label
@@ -328,13 +328,17 @@ def load_partlayout_data(raw_dir: str, max_num_elements: int,
                 'name': idx,
                 'bboxes': bboxes,
                 'labels': labels,
-                'canvas_size': [W, H],
+                'canvas_size': [512, 512],
                 'filtered': filtered,
             }
             dataset.append(data)
 
         if split_partlayout == 'train':
             train_list = dataset
+        
+        elif split_partlayout == 'test':
+            test_list = dataset
+
         else:
             val_list = dataset
 
@@ -343,12 +347,9 @@ def load_partlayout_data(raw_dir: str, max_num_elements: int,
     indices = torch.randperm(len(train_list), generator=generator)
     train_list = [train_list[i] for i in indices]
 
-    # train_list -> train 95% / val 5%
-    # val_list -> test 100%
 
-    s = int(len(train_list) * .95)
-    train_set = train_list[:s]
-    test_set = train_list[s:]
+    train_set = train_list
+    test_set = test_list
     val_set = val_list
     split_dataset = [train_set, test_set, val_set]
     return split_dataset

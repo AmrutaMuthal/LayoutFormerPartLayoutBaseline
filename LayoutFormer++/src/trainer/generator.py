@@ -39,7 +39,7 @@ class Generator():
         self.seq_processor = seq_processor
         self.test_dataset = test_dataset
         self.d2c_fn = d2c_fn or self.default_d2c_fn
-        self.fid = fid_model
+        # self.fid = fid_model
         self.is_label_condition = is_label_condition
         self.saved_layouts = saved_layouts
         self.save_entries = save_entries or list()
@@ -143,10 +143,10 @@ class Generator():
 
         gold_padding_mask = ~gold_mask
         pred_padding_mask = ~pred_mask
-        self.fid.collect_features(layouts['pred_bboxes'].to(
-            self.device), layouts['pred_labels'].to(self.device), pred_padding_mask.to(self.device))
-        self.fid.collect_features(layouts['gold_bboxes'].to(self.device), layouts['gold_labels'].to(
-            self.device), gold_padding_mask.to(self.device), real=True)
+        # self.fid.collect_features(layouts['pred_bboxes'].to(
+        #     self.device), layouts['pred_labels'].to(self.device), pred_padding_mask.to(self.device))
+        # self.fid.collect_features(layouts['gold_bboxes'].to(self.device), layouts['gold_labels'].to(
+        #     self.device), gold_padding_mask.to(self.device), real=True)
 
         self.alignment += metrics.compute_alignment(
             layouts['pred_bboxes'], pred_mask).tolist()
@@ -159,7 +159,7 @@ class Generator():
     def logging_metrics(self):
         self.eval_bbox_acc = self.eval_num_bbox_correct / self.eval_num_bbox
         self.eval_label_acc = self.eval_num_label_correct / self.eval_num_examples
-        self.fid_score_eval = self.fid.compute_score()
+        # self.fid_score_eval = self.fid.compute_score()
         self.max_iou_eval = metrics.compute_maximum_iou(
             self.gold_layouts, self.pred_layouts)
         self.alignment_eval = metrics.average(self.alignment)
@@ -173,7 +173,7 @@ class Generator():
         print('Generated layouts are saved at:', self.args.out_dir)
         print("bbox accuracy: {}".format(self.eval_bbox_acc))
         print("Label accuracy: {}".format(self.eval_label_acc))
-        print("FID score: {}".format(self.fid_score_eval))
+        # print("FID score: {}".format(self.fid_score_eval))
         print("Max IoU: {}".format(self.max_iou_eval))
         print("Alignment: {}".format(self.alignment_eval))
         print("Overlap: {}".format(self.overlap_eval))
@@ -184,7 +184,7 @@ class Generator():
         eval_metrics = {
             'bbox_acc': self.eval_bbox_acc,
             'label_acc': self.eval_label_acc,
-            'fid': self.fid_score_eval,
+            # 'fid': self.fid_score_eval,
             'mIoU': self.max_iou_eval,
             'alignment': self.alignment_eval,
             'overlap': self.overlap_eval,
@@ -236,7 +236,7 @@ class Generator():
 
     def __call__(self, test_step, draw_colors, constraint_fn: Callable = None):
         if self._is_main_process:
-            self.fid.model.to(self.device)
+            # self.fid.model.to(self.device)
 
             self.model.eval()
             self.init_eval_metrics()
